@@ -19,9 +19,11 @@ app = gui("Coin Calculator","600x480")
 
 
 
-goldRate = 500
 
 coinRate = 650
+goldRate = 500
+
+ratesFile = "ExchangeRates.txt"
 
 
 
@@ -32,18 +34,27 @@ def CalculateExg(button):
 
     else:
 
+        
+        
         coin = app.getEntry("Coin") #getting coin and gold values in the entries
 
         gold = app.getEntry("Gold")
+        
 
         if app.getRadioButton("Exg") == "Coin to Gold": #getting radio button value
-
+            
+            if(coin == 0):
+                app.errorBox("Invalid","Coin Exchange Value cannot be 0 for this operation. Change settings in the options menu.")
+                return
 
             exg = round((coin*goldRate/coinRate),2),"K"
 
 
         elif app.getRadioButton("Exg") == "Gold to Coin":
-
+            
+            if(gold == 0):
+                app.errorBox("Invalid","Gold Exchange Value cannot be 0 for this operation. Change settings in the options menu.")
+                return
 
             exg = round((gold*coinRate/gold),2),"C"
 
@@ -118,22 +129,41 @@ def AddOrRemove(btn):
  
 
 def SaveRates(btn):
-    coinRate = app.getEntry("CoinRate")
-    goldRate = app.getEntry("GoldRate")
-    UpdateRates(coinRate,goldRate)
+    global coinRate
+    global goldRate
+    
+    coinVal = app.getEntry("CoinRate")
+    goldVal = app.getEntry("GoldRate")
+    UpdateRates(coinVal,goldVal)
+    
+    
+    coinRate,goldRate = LoadRates()
+    SetEntries("CoinRate","GoldRate")
+    app.infoBox("Saved",f"Coin Rate: {coinRate}, Gold Rate: {goldRate} saved succesfully!")
 
 def UpdateRates(coin,gold):
-    file = open("ExchangeRates.txt","w")
+    file = open(ratesFile,"w")
     file.write(str(coin) + "\n")
     file.write(str(gold))
     file.close()
     
 def LoadRates():
-    file = open("ExchangeRates.txt",r)
-    print(file.readline())
-    print(file.readline())
+    global coinRate
+    global goldRate
+    
+    file = open(ratesFile,"r")
+        
+    coinRate = float(file.readline())
+    goldRate = float(file.readline())
     file.close()
     
+    SetEntries("CoinRate","GoldRate")
+    return coinRate,goldRate
+    
+def SetEntries(cEntry,gEntry):    
+    app.setEntry(cEntry,coinRate)
+    app.setEntry(gEntry,goldRate)
+
 def ClearHistory():
     print("")
 
@@ -342,10 +372,14 @@ app.stopTab()
 #Options tab. Manage history and Exchange Rate
 
 app.startTab("Options")
+
+
+
 app.startLabelFrame("Rates")
 app.startFrame("Exchange Rate",row=0,column=0)
 
-app.addLabelNumericEntry("CoinRate",coinRate)
+app.addLabelNumericEntry("CoinRate")
+app.setEntry("CoinRate",coinRate)
 
 app.stopFrame()
 
@@ -357,7 +391,8 @@ app.stopFrame()
 
 app.startFrame("Rate2",row=0,column=5)
 
-app.addLabelNumericEntry("GoldRate",goldRate)
+app.addLabelNumericEntry("GoldRate")
+app.setEntry("GoldRate",goldRate)
 
 app.stopFrame()
 
@@ -366,6 +401,7 @@ app.stopLabelFrame()
 
 app.addButton("Clear History",ClearHistory)
 
+LoadRates()
 
 app.stopTab()
 
