@@ -1,4 +1,5 @@
 from appJar import gui
+import datetime
 
 
 app = gui("Coin Calculator","600x480")
@@ -24,31 +25,31 @@ coinRate = 650
 goldRate = 500
 
 ratesFile = "ExchangeRates.txt"
+historyPath = "History.txt"
 
 
 
 def CalculateExg(button):
 
+    x = ""
+    value = 0 
     if button == "Quit":
         app.stop()
 
     else:
-
-        
-        
         coin = app.getEntry("Coin") #getting coin and gold values in the entries
 
         gold = app.getEntry("Gold")
         
-
         if app.getRadioButton("Exg") == "Coin to Gold": #getting radio button value
             
             if(coin == 0):
                 app.errorBox("Invalid","Coin Exchange Value cannot be 0 for this operation. Change settings in the options menu.")
                 return
 
-            exg = round((coin*goldRate/coinRate),2),"K"
-
+            exg = round((coin*goldRate/coinRate),2)
+            x="K"
+            value = coin
 
         elif app.getRadioButton("Exg") == "Gold to Coin":
             
@@ -56,13 +57,31 @@ def CalculateExg(button):
                 app.errorBox("Invalid","Gold Exchange Value cannot be 0 for this operation. Change settings in the options menu.")
                 return
 
-            exg = round((gold*coinRate/gold),2),"C"
+            exg = round(gold*coinRate/goldRate,2)
+            value = gold
+            x="C"
 
+        lblMsg = exg,x
 
-        app.setLabel("l1",exg)
+        AddToHistory(coinRate,goldRate,value,exg,x)
+        app.setLabel("l1",lblMsg)
+        ReadHistory()
             
+def AddToHistory(cRate,gRate,value,exg,x):
+    file = open(historyPath,"a")
+    if(x == "K"):
+        file.write(f"Coin Rate: {cRate}, Gold Rate: {gRate}\nCoin Value: {value}C = {exg}{x} || Date: {datetime.datetime.now().strftime("%x")} {datetime.datetime.now().strftime("%X")}\n-----\n")
+    else:
+        file.write(f"Coin Rate: {cRate}, Gold Rate: {gRate}\nGold Value: {value}K = {exg}{x} || Date: {datetime.datetime.now().strftime("%x")} {datetime.datetime.now().strftime("%X")}\n-----\n")
+    file.close()
 
-
+def ReadHistory():
+    file = open(historyPath,"r")
+    history = file.read()
+    
+    app.setLabel("History",history)
+        
+    
 
 def AddOrRemove(btn):
 
@@ -165,7 +184,9 @@ def SetEntries(cEntry,gEntry):
     app.setEntry(gEntry,goldRate)
 
 def ClearHistory():
-    print("")
+    file = open(historyPath,"w")
+    file.close()
+    ReadHistory()
 
 
 app.startTabbedFrame("Coin Calculator")
@@ -359,8 +380,9 @@ app.stopTab()
 
 app.startTab("History")
 
-
-app.addLabel("History Here")
+app.startScrollPane("Pane")
+app.addLabel("History")
+app.stopScrollPane()
 
 
 app.stopTab()
@@ -407,7 +429,7 @@ app.stopTab()
 
 
 
-
+ReadHistory()
 app.stopTabbedFrame()
 
 app.go()
