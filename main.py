@@ -27,6 +27,14 @@ goldRate = 500
 ratesFile = "ExchangeRates.txt"
 historyPath = "History.txt"
 
+def init():
+    file = open(ratesFile,"a")
+    file.close()
+
+    file = open(historyPath,"a")
+    file.close()
+    LoadRates()
+    ReadHistory()
 
 
 def CalculateExg(button):
@@ -171,9 +179,12 @@ def LoadRates():
     global goldRate
     
     file = open(ratesFile,"r")
-        
-    coinRate = float(file.readline())
-    goldRate = float(file.readline())
+    
+    
+    if(file.read() != '' ):
+        file.seek(0,0)
+        coinRate = float(file.readline())
+        goldRate = float(file.readline())
     file.close()
     
     SetEntries("CoinRate","GoldRate")
@@ -279,7 +290,7 @@ app.stopFrame()
 app.startFrame("LabelMid",row=3,column=0)
 
 
-app.addLabel("GoldL","Gold")
+app.addLabel("GoldL","Gold(K)")
 
 
 app.stopFrame()
@@ -379,6 +390,8 @@ app.stopTab()
 
 
 app.startTab("History")
+app.addLabel("Exchange History")
+app.setLabelBg("Exchange History","Yellow")
 
 app.startScrollPane("Pane")
 app.addLabel("History")
@@ -423,15 +436,16 @@ app.stopLabelFrame()
 
 app.addButton("Clear History",ClearHistory)
 
-LoadRates()
+
 
 app.stopTab()
 
 
 
-ReadHistory()
+
 app.stopTabbedFrame()
 
+init()
 app.go()
 
 
