@@ -1,1 +1,1 @@
-Download, extract and run the Coin-Calc.exe
+Extract folder from zip. Run main.exe in CoinCalculator folder
