@@ -1,1 +1,1 @@
-Run main.exe in CoinCalculator folder
+Extract folder from zip. Run main.exe in CoinCalculator folder
