@@ -56,7 +56,7 @@ def CalculateExg(button):
                 return
 
             exg = round((coin*goldRate/coinRate),2)
-            x="K"
+            x="KK"
             value = coin
 
         elif app.getRadioButton("Exg") == "Gold to Coin":
@@ -77,7 +77,7 @@ def CalculateExg(button):
             
 def AddToHistory(cRate,gRate,value,exg,x):
     file = open(historyPath,"a")
-    if(x == "K"):
+    if(x == "KK"):
         file.write(f"Coin Rate: {cRate}, Gold Rate: {gRate}\nCoin Value: {value}C = {exg}{x} || Date: {datetime.datetime.now().strftime("%x")} {datetime.datetime.now().strftime("%X")}\n-----\n")
     else:
         file.write(f"Coin Rate: {cRate}, Gold Rate: {gRate}\nGold Value: {value}K = {exg}{x} || Date: {datetime.datetime.now().strftime("%x")} {datetime.datetime.now().strftime("%X")}\n-----\n")
@@ -290,7 +290,7 @@ app.stopFrame()
 app.startFrame("LabelMid",row=3,column=0)
 
 
-app.addLabel("GoldL","Gold(K)")
+app.addLabel("GoldL","Gold(KK)")
 
 
 app.stopFrame()
@@ -415,11 +415,12 @@ app.startFrame("Exchange Rate",row=0,column=0)
 
 app.addLabelNumericEntry("CoinRate")
 app.setEntry("CoinRate",coinRate)
+app.setLabel("CoinRate","Coin Rate")
 
 app.stopFrame()
 
 app.startFrame("Rate1",row=0,column=1)
-app.addLabel("Equals","=")
+app.addLabel("Equals","=",row=None,column=3)
 app.setLabelFont("Equals",16)
 
 app.stopFrame()
@@ -428,10 +429,11 @@ app.startFrame("Rate2",row=0,column=5)
 
 app.addLabelNumericEntry("GoldRate")
 app.setEntry("GoldRate",goldRate)
+app.setLabel("GoldRate","Gold Rate")
 
 app.stopFrame()
 
-app.addButton("Save",SaveRates)
+app.addButton("Save",SaveRates,row=None,column=1)
 app.stopLabelFrame()
 
 app.addButton("Clear History",ClearHistory)
