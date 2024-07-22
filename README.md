@@ -1,1 +1,1 @@
-Copy CoinCalculator folder and run the .exe inside it
+Run main.exe in CoinCalculator folder
